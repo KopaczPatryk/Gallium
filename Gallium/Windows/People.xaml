@@ -1,0 +1,17 @@
+﻿<Window x:Class="Gallium.Windows.People"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Gallium.Windows"
+        mc:Ignorable="d"
+        Title="People" Height="450" Width="800">
+    <Grid>
+        <ScrollViewer Name="ScrollViewMiniatures" Margin="10,10,0,30">
+            <StackPanel Name="PeopleList">
+                
+            </StackPanel>
+        </ScrollViewer>
+        <CheckBox HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10" Content="Pokaż prosty widok"/>
+    </Grid>
+</Window>
