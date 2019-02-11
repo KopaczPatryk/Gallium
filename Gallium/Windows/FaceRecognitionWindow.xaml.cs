@@ -58,7 +58,7 @@ namespace Gallium.Windows
         {
             var FaceClient = new FaceServiceClient(Constants.APIkey, Constants.APIUri);
 
-            var creationResult = await FaceClient.CreatePersonInLargePersonGroupAsync(Constants.MainPersonGroupId, person.Name + person.LastName);
+            var creationResult = await FaceClient.CreatePersonInLargePersonGroupAsync(Constants.MainPersonGroupId, $"{person.Name}_{person.LastName}");
             Guid personId = creationResult.PersonId;
             person.RemoteGuid = personId;
 

@@ -22,19 +22,54 @@ namespace Gallium.Windows
     /// </summary>
     public partial class MainMenu : Window
     {
+        private IFaceServiceClient FaceClient;
+        private GalliumContext Context;
+
         public MainMenu()
         {
+            FaceClient = new FaceServiceClient(Constants.APIkey, Constants.APIUri);
             InitializeComponent();
 
             InitPersonGroup();
             InitWorkingDirectory();
+
+            SynchroniseData();
+        }
+
+        private async void SynchroniseData()
+        { 
+            await UpdateLocalDB();
+            await UpdateRemoteDB();
+        }
+
+        private async Task UpdateLocalDB()
+        {
+            var peopleInFaceApi = await FaceClient.ListPersonsInLargePersonGroupAsync(Constants.MainPersonGroupId);
+
+            foreach (var person in peopleInFaceApi)
+            {
+                if (!Context.Person.Where(p => ($"{p.Name + p}_{p.LastName}").Equals(person.Name)).Any())
+                {
+                    var personEntity = new Models.Person
+                    {
+                        Name = person.Name.Substring(0, person.Name.IndexOf('_')),
+                        LastName = person.Name.Substring(person.Name.IndexOf('_') + 1),
+                        RemoteGuid = person.PersonId
+                    };
+                    Context.Person.Add(personEntity);
+                    await Context.SaveChangesAsync();
+                }
+            }
+        }
+
+        private async Task UpdateRemoteDB()
+        {
+            throw new NotImplementedException();
         }
 
         private async void InitPersonGroup()
         {
-            var FaceClient = new FaceServiceClient(Constants.APIkey, Constants.APIUri);
-
-            var personGroups = FaceClient.ListLargePersonGroupsAsync().Result;
+            var personGroups = await FaceClient.ListLargePersonGroupsAsync();
             if (!personGroups.Where(pg => pg.LargePersonGroupId.Equals(Constants.MainPersonGroupId)).Any())
             {
                 await FaceClient.CreatePersonGroupAsync(Constants.MainPersonGroupId, "Wszyscy");

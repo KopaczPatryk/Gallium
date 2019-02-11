@@ -163,6 +163,10 @@
     <Compile Include="Migrations\201902111807045_faceapimodels1.Designer.cs">
       <DependentUpon>201902111807045_faceapimodels1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902111940081_faceapilogic1.cs" />
+    <Compile Include="Migrations\201902111940081_faceapilogic1.Designer.cs">
+      <DependentUpon>201902111940081_faceapilogic1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FaceApi\DetectedFace.cs" />
     <Compile Include="Models\FaceApi\PhotoEqualityComparer.cs" />
@@ -314,6 +318,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902111807045_faceapimodels1.resx">
       <DependentUpon>201902111807045_faceapimodels1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902111940081_faceapilogic1.resx">
+      <DependentUpon>201902111940081_faceapilogic1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
