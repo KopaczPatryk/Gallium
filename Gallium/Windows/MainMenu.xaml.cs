@@ -24,6 +24,7 @@ namespace Gallium.Windows
 
         public MainMenu()
         {
+            Context = new GalliumContext();
             FaceClient = new FaceServiceClient(Constants.APIkey, Constants.APIUri);
             InitializeComponent();
 
@@ -38,7 +39,7 @@ namespace Gallium.Windows
             var personGroups = await FaceClient.ListLargePersonGroupsAsync();
             if (!personGroups.Where(pg => pg.LargePersonGroupId.Equals(Constants.MainPersonGroupId)).Any())
             {
-                await FaceClient.CreatePersonGroupAsync(Constants.MainPersonGroupId, "Wszyscy");
+                await FaceClient.CreateLargePersonGroupAsync(Constants.MainPersonGroupId, "Wszyscy");
             }
         }
 
@@ -69,18 +70,21 @@ namespace Gallium.Windows
         {
             var peopleInFaceApi = await FaceClient.ListPersonsInLargePersonGroupAsync(Constants.MainPersonGroupId);
 
-            foreach (var person in peopleInFaceApi)
+            if (peopleInFaceApi.Any())
             {
-                if (!Context.Person.Where(p => ($"{p.Name}_{p.LastName}").Equals(person.Name)).Any())
+                foreach (var person in peopleInFaceApi)
                 {
-                    var personEntity = new Models.Person
+                    if (!Context.Person.Where(p => ($"{p.Name}_{p.LastName}").Equals(person.Name)).Any())
                     {
-                        Name = person.Name.Substring(0, person.Name.IndexOf('_')),
-                        LastName = person.Name.Substring(person.Name.IndexOf('_') + 1),
-                        RemoteGuid = person.PersonId
-                    };
-                    Context.Person.Add(personEntity);
-                    await Context.SaveChangesAsync();
+                        var personEntity = new Models.Person
+                        {
+                            Name = person.Name.Substring(0, person.Name.IndexOf('_')),
+                            LastName = person.Name.Substring(person.Name.IndexOf('_') + 1),
+                            RemoteGuid = person.PersonId
+                        };
+                        Context.Person.Add(personEntity);
+                        await Context.SaveChangesAsync();
+                    }
                 }
             }
         }
@@ -98,7 +102,7 @@ namespace Gallium.Windows
                 }
             }
         }
-        
+
         private void Button_Settings_Click(object sender, RoutedEventArgs e)
         {
             Settings settings = new Settings();

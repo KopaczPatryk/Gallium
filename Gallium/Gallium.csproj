@@ -205,8 +205,8 @@
     <Compile Include="Windows\MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\People.xaml.cs">
-      <DependentUpon>People.xaml</DependentUpon>
+    <Compile Include="Windows\PeopleProfilesWindow.xaml.cs">
+      <DependentUpon>PeopleProfilesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\PersonCreationWindow.xaml.cs">
       <DependentUpon>PersonCreationWindow.xaml</DependentUpon>
@@ -262,7 +262,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\People.xaml">
+    <Page Include="Windows\PeopleProfilesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
