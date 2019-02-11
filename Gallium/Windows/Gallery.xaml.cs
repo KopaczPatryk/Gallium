@@ -29,7 +29,7 @@ namespace Gallium
         GalliumContext ctx;
         public ImagePreview preview;
 
-        List<Photo> photos = new List<Photo>();
+        IList<Photo> photos = new List<Photo>();
         List<ILoadableImage> miniatures = new List<ILoadableImage>();
 
         List<int> miniatureLoadQueue = new List<int>();
@@ -51,94 +51,22 @@ namespace Gallium
         {
             using (ctx = new GalliumContext())
             {
-                var dirs = ctx.Directories.ToList();
-                var discoveredPhotos = DiscoverPhotosInDirectories(dirs);
+                List<PhotoDirectories> directories = await ctx.Directories.ToListAsync();
+                photos = DiscoverPhotosInDirectories(directories);
                 
-                //ewidencjonowanie
-                foreach (var photo in discoveredPhotos)
-                {
-                    if (!ctx.Photos.Where(p => p.FullName.Equals(photo.FullName)).Any())
-                    {
-                        ctx.Photos.Add(photo);
-                    }
-                }
-                //pobranie tylko tych co są w folderze
-                photos = await ctx.Photos.Include(faceClient => faceClient.DetectedFaces.Select(df => df.FaceOwner)).Include(m => m.Miniature).ToListAsync();
-                photos = photos.Intersect(discoveredPhotos, new PhotoEqualityComparer()).ToList();
-                await ctx.SaveChangesAsync();
+                AddPhotosToDB(ctx, photos); 
 
-                //zapis twarzy do plików
-                /*foreach (var photo in photos)
-                {
-                    if (!photo.DetectedFaces.Any() && photo.HasFaces == true)
-                    {
-                        DetectedFace detectedFace = new DetectedFace();
-                        var r = await UploadToFaceApiAsync(photo.FullName);
-                        foreach (var face in r)
-                        {
-                            detectedFace = new DetectedFace();
-                            detectedFace.FaceId = face.FaceId;
-                            detectedFace.FaceRectangle = face.FaceRectangle;
-                            detectedFace.HumanVerified = false;
-                            photo.DetectedFaces.Add(detectedFace);
-                            ExtractFaceFromPhoto(photo, detectedFace);
-                        }
-                        await ctx.SaveChangesAsync();
-                    }
-                }*/
-                List<Photo> faulty = new List<Photo>();
-                int bez = 0;
-                int z = 0;
+                photos = await TryGetMiniaturesAsync(photos, ctx);
 
                 foreach (var photo in photos)
                 {
-                    if (photo.FullName.Contains("IMG_20180310_165252.jpg"))
-                    {
-                        Console.WriteLine();
-                    }
-                    if (photo.Miniature == null)
-                    {
-                        bez++;
-                        try
-                        {
-                            photo.Miniature = GetMiniatureForPhoto(photo);
-                        }
-                        catch (ArgumentException)
-                        {
-                            faulty.Add(photo);
-                            Console.WriteLine($"Skipping file {photo.FullName}");
-                        }
-                    }
-                    else
-                    {
-                        z++;     
-                    }
-                }
-                foreach (var faultyone in faulty)
-                {
-                    photos.Remove(faultyone);
+                    AddMiniatureToGrid(photo);
                 }
 
-                foreach (var photo in photos)
-                {
-                    if (photo.Miniature.MiniatureFileName.Contains("cipeczki"))
-                    {
-                        Console.WriteLine("dd");
-                    }
-                    if (photo.Miniature != null)
-                    {
-                        AddMiniatureToGrid(photo);
-                    }
-                    else
-                    {
-                        throw new Exception("Miniature is missing");
-                    }
-                }
                 foreach (ILoadableImage miniature in miniatures)
                 {
                     miniature.MiniatureLoaded += Miniature_MiniatureLoaded;
                 }
-                await ctx.SaveChangesAsync();
                 StartLoadingMiniatures();
             }
         }
@@ -165,6 +93,34 @@ namespace Gallium
                 }
             }
             return discoveredPhotos;
+        }
+
+        private async void AddPhotosToDB(GalliumContext ctx, IList<Photo> photos)
+        {
+            foreach (var photo in photos)
+            {
+                if (!ctx.Photos.Where(p => p.FullName.Equals(photo.FullName)).Any())
+                {
+                    ctx.Photos.Add(photo);
+                }
+            }
+            await ctx.SaveChangesAsync();
+        }
+        
+        private async Task<IList<Photo>> TryGetMiniaturesAsync(IList<Photo> photos, GalliumContext ctx)
+        {
+            //dodać generacje brakujących miniatur
+            photos = await ctx.Photos.Include(faceClient => faceClient.DetectedFaces.Select(df => df.FaceOwner)).Include(m => m.Miniature).ToListAsync();
+            photos = photos.Intersect(photos, new PhotoEqualityComparer()).ToList();
+            await ctx.SaveChangesAsync();
+            return photos;
+        }
+
+        private void AddMiniatureToGrid(Photo photo)
+        {
+            ILoadableImage miniatureControl = new ClickableMiniatureImage(this, photo);
+            miniatures.Add(miniatureControl);
+            grid_images.Children.Add((ClickableMiniatureImage)miniatureControl);
         }
 
         private async Task<IList<Face>> UploadToFaceApiAsync (string fullPath)
@@ -357,12 +313,6 @@ namespace Gallium
             preview.Show();
         }
 
-        private void AddMiniatureToGrid(Photo photo)
-        {
-            ILoadableImage miniatureControl = new ClickableMiniatureImage(this, photo);
-            miniatures.Add(miniatureControl);
-            grid_images.Children.Add((ClickableMiniatureImage)miniatureControl);
-        }
         private void ScrollViewMiniatures_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             double itemsInRow = e.ViewportWidth / grid_images.ItemWidth;
@@ -399,3 +349,22 @@ namespace Gallium
         }
     }
 }
+//zapis twarzy do plików
+/*foreach (var photo in photos)
+{
+    if (!photo.DetectedFaces.Any() && photo.HasFaces == true)
+    {
+        DetectedFace detectedFace = new DetectedFace();
+        var r = await UploadToFaceApiAsync(photo.FullName);
+        foreach (var face in r)
+        {
+            detectedFace = new DetectedFace();
+            detectedFace.FaceId = face.FaceId;
+            detectedFace.FaceRectangle = face.FaceRectangle;
+            detectedFace.HumanVerified = false;
+            photo.DetectedFaces.Add(detectedFace);
+            ExtractFaceFromPhoto(photo, detectedFace);
+        }
+        await ctx.SaveChangesAsync();
+    }
+}*/

@@ -150,6 +150,10 @@
     <Compile Include="Migrations\201808281907259_Pupa.Designer.cs">
       <DependentUpon>201808281907259_Pupa.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902111529354_rework1.cs" />
+    <Compile Include="Migrations\201902111529354_rework1.Designer.cs">
+      <DependentUpon>201902111529354_rework1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FaceApi\DetectedFace.cs" />
     <Compile Include="Models\FaceApi\PhotoEqualityComparer.cs" />
@@ -292,6 +296,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201808281907259_Pupa.resx">
       <DependentUpon>201808281907259_Pupa.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902111529354_rework1.resx">
+      <DependentUpon>201902111529354_rework1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

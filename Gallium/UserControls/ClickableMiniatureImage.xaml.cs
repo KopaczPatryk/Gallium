@@ -70,7 +70,10 @@ namespace Gallium.UserControls
         {
             if (!backgroundWorker.IsBusy)
             {
-                backgroundWorker.RunWorkerAsync(photo.Miniature.MiniatureFullPath);
+                if (photo.Miniature != null)
+                {
+                    backgroundWorker.RunWorkerAsync(photo.Miniature.MiniatureFullPath);
+                }
             }
         }
     }
