@@ -41,6 +41,7 @@ namespace Gallium
         public Gallery()
         {
             faceClient = new FaceServiceClient(Constants.APIkey, Constants.APIUri);
+            
             miniatureGenerator = new MiniatureGenerator();
             InitializeComponent();
             ScrollViewMiniatures.ScrollChanged += ScrollViewMiniatures_ScrollChanged;
@@ -71,7 +72,7 @@ namespace Gallium
             }
         }
 
-        private IList<Photo> DiscoverPhotosInDirectories(ICollection<Models.PhotoDirectories> directories)
+        private IList<Photo> DiscoverPhotosInDirectories(ICollection<PhotoDirectories> directories)
         {
             List<string> supportedFormats = new List<string> { ".jpg", ".jpeg", ".bmp", ".png" };
 

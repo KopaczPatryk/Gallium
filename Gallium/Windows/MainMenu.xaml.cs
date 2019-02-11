@@ -1,4 +1,6 @@
-﻿using Ookii.Dialogs.Wpf;
+﻿using Gallium.Data;
+using Microsoft.ProjectOxford.Face;
+using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,16 +25,31 @@ namespace Gallium.Windows
         public MainMenu()
         {
             InitializeComponent();
-            //Properties.Settings.Default.Reset();
-            //Properties.Settings.Default.Save();
 
-            if (String.IsNullOrEmpty(Properties.Settings.Default.GalleryMainFolder))
+            InitPersonGroup();
+            InitWorkingDirectory();
+        }
+
+        private async void InitPersonGroup()
+        {
+            var FaceClient = new FaceServiceClient(Constants.APIkey, Constants.APIUri);
+
+            var personGroups = FaceClient.ListLargePersonGroupsAsync().Result;
+            if (!personGroups.Where(pg => pg.LargePersonGroupId.Equals(Constants.MainPersonGroupId)).Any())
+            {
+                await FaceClient.CreatePersonGroupAsync(Constants.MainPersonGroupId, "Wszyscy");
+            }
+        }
+
+        private void InitWorkingDirectory()
+        {
+            if (string.IsNullOrEmpty(Properties.Settings.Default.GalleryMainFolder))
             {
                 MessageBox.Show("Folder w którym mają być przechowywane pliki pomocnicze nie został jeszcze wybrany. Teraz otworzę okno wyboru folderu głównego.");
                 VistaFolderBrowserDialog setupDirectory = new VistaFolderBrowserDialog();
                 setupDirectory.Description = "Wybierz lokalizacje pomocniczą.";
                 setupDirectory.ShowDialog();
-                if (!String.IsNullOrEmpty(setupDirectory.SelectedPath))
+                if (!string.IsNullOrEmpty(setupDirectory.SelectedPath))
                 {
                     Properties.Settings.Default.GalleryMainFolder = setupDirectory.SelectedPath;
                     Properties.Settings.Default.Save();

@@ -13,6 +13,8 @@ namespace Gallium.Models
         public DateTime? DateOfBirth { get; set; }
         public string Name { get; set; }
         public string LastName { get; set; }
+        public Guid RemoteGuid { get; internal set; }
+
         public override string ToString()
         {
             return $"{Name} {LastName} {DateOfBirth?.ToString("dd-MM-yyyy")}";

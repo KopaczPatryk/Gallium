@@ -2,6 +2,7 @@ namespace Gallium.Data
 {
     using Gallium.Models;
     using Gallium.Models.FaceApi;
+    using Microsoft.ProjectOxford.Face.Contract;
     using System;
     using System.Data.Entity;
     using System.Linq;
@@ -25,8 +26,11 @@ namespace Gallium.Data
         public virtual DbSet<PhotoDirectories> Directories { get; set; }
         public virtual DbSet<Photo> Photos { get; set; }
         public virtual DbSet<DetectedFace> DetectedFaces { get; set; }
-        public virtual DbSet<Person> Person { get; set; }
+        public virtual DbSet<Models.Person> Person { get; set; }
         public virtual DbSet<PhotoMiniature> MiniatureLocations { get; set; }
+
+        public virtual DbSet<LargeFaceList> LargeFaceLists { get; set; }
+        public virtual DbSet<LargePersonGroup> LargePersonGroups { get; set; }
     }
 
     //public class MyEntity

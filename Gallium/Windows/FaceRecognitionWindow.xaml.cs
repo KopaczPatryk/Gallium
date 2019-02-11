@@ -1,6 +1,7 @@
 ﻿using Gallium.Data;
 using Gallium.Models;
 using Gallium.Models.FaceApi;
+using Microsoft.ProjectOxford.Face;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,36 +50,36 @@ namespace Gallium.Windows
         private void NewPerson_Click(object sender, RoutedEventArgs e)
         {
             PersonCreationWindow personCreationWindow = new PersonCreationWindow();
-            personCreationWindow.OnPersonCreatedHandler += PersonCreationWindow_OnPersonCreatedHandler;
+            personCreationWindow.OnPersonCreatedHandler += PersonCreationWindow_OnPersonCreatedHandlerAsync;
             personCreationWindow.ShowDialog();
         }
 
-        private void PersonCreationWindow_OnPersonCreatedHandler(Person person)
+        private async void PersonCreationWindow_OnPersonCreatedHandlerAsync(Person person)
         {
+            var FaceClient = new FaceServiceClient(Constants.APIkey, Constants.APIUri);
+
+            var creationResult = await FaceClient.CreatePersonInLargePersonGroupAsync(Constants.MainPersonGroupId, person.Name + person.LastName);
+            Guid personId = creationResult.PersonId;
+            person.RemoteGuid = personId;
+
             ctx.Person.Add(person);
             ctx.SaveChanges();
+
             UsernameList.ItemsSource = ctx.Person.ToList();
         }
 
         private void Accept_Click(object sender, RoutedEventArgs e)
         {
-            
             if (recognizedPerson != null)
             {
                 face.FaceOwner = recognizedPerson;
                 if (ContinueValidating.IsChecked.HasValue)
                 {
-                    if (OnFaceRecognised != null)
-                    {
-                        OnFaceRecognised(recognizedPerson, ContinueValidating.IsChecked.Value);
-                    }
+                    OnFaceRecognised?.Invoke(recognizedPerson, ContinueValidating.IsChecked.Value);
                 }
                 else
                 {
-                    if (OnFaceRecognised != null)
-                    {
-                        OnFaceRecognised(recognizedPerson, false);
-                    }
+                    OnFaceRecognised?.Invoke(recognizedPerson, false);
                 }
                 ctx.SaveChanges();
                 this.Close();
