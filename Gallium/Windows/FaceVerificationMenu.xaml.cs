@@ -29,7 +29,7 @@ namespace Gallium.Windows
 
         private void Button_FaceRegister_Click(object sender, RoutedEventArgs e)
         {
-            PeopleProfilesWindow peopleWindow = new PeopleProfilesWindow(context.Person.ToList(), context);
+            PeopleProfilesWindow peopleWindow = new PeopleProfilesWindow(context);
             peopleWindow.ShowDialog();
         }
 

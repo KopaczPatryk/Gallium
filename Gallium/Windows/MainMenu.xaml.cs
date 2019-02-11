@@ -74,7 +74,7 @@ namespace Gallium.Windows
             {
                 foreach (var person in peopleInFaceApi)
                 {
-                    if (!Context.Person.Where(p => ($"{p.Name}_{p.LastName}").Equals(person.Name)).Any())
+                    if (!Context.Person.Where(p => (p.Name + "_" + p.LastName).Equals(person.Name)).Any())
                     {
                         var personEntity = new Models.Person
                         {
@@ -96,7 +96,7 @@ namespace Gallium.Windows
 
             foreach (var person in localPeople)
             {
-                if (!peopleInFaceApi.Where(p => p.Name.Equals($"{person.Name}_{person.LastName}")).Any())
+                if (!peopleInFaceApi.Where(p => p.Name.Equals(person.Name + "_" + person.LastName)).Any())
                 {
                     await FaceClient.CreatePersonInLargePersonGroupAsync(Constants.MainPersonGroupId, $"{person.Name}_{person.LastName}");
                 }

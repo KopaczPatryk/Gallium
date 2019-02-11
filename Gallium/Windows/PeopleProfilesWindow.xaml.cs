@@ -24,13 +24,19 @@ namespace Gallium.Windows
     public partial class PeopleProfilesWindow : Window
     {
         GalliumContext Context;
-        public PeopleProfilesWindow(IList<Person> peopleList, GalliumContext context)
+
+        public PeopleProfilesWindow(GalliumContext context)
         {
             Context = context;
             InitializeComponent();
-            foreach (var person in peopleList)
+            PopulateView();
+        }
+
+        private void PopulateView()
+        {
+            foreach (var person in Context.Person.ToList())
             {
-                PeopleList.Children.Add(new DetailedPersonView(person, context));
+                PeopleList.Children.Add(new DetailedPersonView(person, Context));
             }
         }
 
@@ -50,6 +56,7 @@ namespace Gallium.Windows
 
             Context.Person.Add(person);
             await Context.SaveChangesAsync();
+            PopulateView();
         }
     }
 }
