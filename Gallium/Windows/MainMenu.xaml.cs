@@ -17,9 +17,6 @@ using System.Windows.Shapes;
 
 namespace Gallium.Windows
 {
-    /// <summary>
-    /// Interaction logic for MainMenu.xaml
-    /// </summary>
     public partial class MainMenu : Window
     {
         private IFaceServiceClient FaceClient;
@@ -34,37 +31,6 @@ namespace Gallium.Windows
             InitWorkingDirectory();
 
             SynchroniseData();
-        }
-
-        private async void SynchroniseData()
-        { 
-            await UpdateLocalDB();
-            await UpdateRemoteDB();
-        }
-
-        private async Task UpdateLocalDB()
-        {
-            var peopleInFaceApi = await FaceClient.ListPersonsInLargePersonGroupAsync(Constants.MainPersonGroupId);
-
-            foreach (var person in peopleInFaceApi)
-            {
-                if (!Context.Person.Where(p => ($"{p.Name + p}_{p.LastName}").Equals(person.Name)).Any())
-                {
-                    var personEntity = new Models.Person
-                    {
-                        Name = person.Name.Substring(0, person.Name.IndexOf('_')),
-                        LastName = person.Name.Substring(person.Name.IndexOf('_') + 1),
-                        RemoteGuid = person.PersonId
-                    };
-                    Context.Person.Add(personEntity);
-                    await Context.SaveChangesAsync();
-                }
-            }
-        }
-
-        private async Task UpdateRemoteDB()
-        {
-            throw new NotImplementedException();
         }
 
         private async void InitPersonGroup()
@@ -93,6 +59,46 @@ namespace Gallium.Windows
             Console.WriteLine(Properties.Settings.Default.GalleryMainFolder);
         }
 
+        private async void SynchroniseData()
+        { 
+            await UpdateLocalDB();
+            await UpdateRemoteDB();
+        }
+
+        private async Task UpdateLocalDB()
+        {
+            var peopleInFaceApi = await FaceClient.ListPersonsInLargePersonGroupAsync(Constants.MainPersonGroupId);
+
+            foreach (var person in peopleInFaceApi)
+            {
+                if (!Context.Person.Where(p => ($"{p.Name}_{p.LastName}").Equals(person.Name)).Any())
+                {
+                    var personEntity = new Models.Person
+                    {
+                        Name = person.Name.Substring(0, person.Name.IndexOf('_')),
+                        LastName = person.Name.Substring(person.Name.IndexOf('_') + 1),
+                        RemoteGuid = person.PersonId
+                    };
+                    Context.Person.Add(personEntity);
+                    await Context.SaveChangesAsync();
+                }
+            }
+        }
+
+        private async Task UpdateRemoteDB()
+        {
+            var localPeople = Context.Person.ToList();
+            var peopleInFaceApi = await FaceClient.ListPersonsInLargePersonGroupAsync(Constants.MainPersonGroupId);
+
+            foreach (var person in localPeople)
+            {
+                if (!peopleInFaceApi.Where(p => p.Name.Equals($"{person.Name}_{person.LastName}")).Any())
+                {
+                    await FaceClient.CreatePersonInLargePersonGroupAsync(Constants.MainPersonGroupId, $"{person.Name}_{person.LastName}");
+                }
+            }
+        }
+        
         private void Button_Settings_Click(object sender, RoutedEventArgs e)
         {
             Settings settings = new Settings();
