@@ -109,11 +109,53 @@ namespace Gallium
         
         private async Task<IList<Photo>> TryGetMiniaturesAsync(IList<Photo> photos, GalliumContext ctx)
         {
-            //dodać generacje brakujących miniatur
             photos = await ctx.Photos.Include(faceClient => faceClient.DetectedFaces.Select(df => df.FaceOwner)).Include(m => m.Miniature).ToListAsync();
-            photos = photos.Intersect(photos, new PhotoEqualityComparer()).ToList();
+            foreach (var photo in photos)
+            {
+                photo.Miniature = GetMiniatureForPhoto(photo);
+            }
             await ctx.SaveChangesAsync();
             return photos;
+        }
+
+        private PhotoMiniature GetMiniatureForPhoto(Photo photo)
+        {
+            if (!DirectoryHelper.CheckIfMiniatureExistsForPhoto(photo.FullName))
+            {
+                Console.WriteLine($"Does not exist, generating...");
+                return GenerateMiniature(photo);
+            }
+            else
+            {
+                Console.WriteLine($"Miniature for photo {photo.Name} found.");
+                var miniature = new PhotoMiniature();
+
+                miniature.MiniatureFileName = DirectoryHelper.GetMiniatureName(photo.Name);
+                //miniature.OriginalImageFullPath = photo.FullName;
+                miniature.MiniatureFullPath = DirectoryHelper.GetFullMiniaturePath(miniature.MiniatureFileName, false);
+                miniature.OriginalImageFileName = photo.Name;
+                return miniature;
+            }
+        }
+        private PhotoMiniature GenerateMiniature(Photo photo)
+        {
+            miniatureGenerator.MaxResolution = 128;
+            var miniatureImage = miniatureGenerator.GenerateMiniature(photo.FullName);
+
+            var path = DirectoryHelper.GetFullMiniaturePath(photo.Name, true);
+
+            var miniature = new PhotoMiniature()
+            {
+                MiniatureFullPath = path,
+                MiniatureFileName = DirectoryHelper.GetMiniatureName(photo.Name),
+                //OriginalImageFullPath = photo.FullName,
+                OriginalImageFileName = photo.Name
+            };
+            if (!File.Exists(path))
+            {
+                miniatureImage.Save(path);
+            }
+            return miniature;
         }
 
         private void AddMiniatureToGrid(Photo photo)
@@ -188,7 +230,7 @@ namespace Gallium
             }
         }
         
-
+        
         private bool ValidatePhoto(Photo photo)
         {
             BitmapDecoder img = BitmapDecoder.Create(new Uri(photo.FullName), BitmapCreateOptions.None, BitmapCacheOption.None);
@@ -201,93 +243,6 @@ namespace Gallium
             return true;
         }
 
-        private PhotoMiniature GetMiniatureForPhoto(Photo photo)
-        {
-            if (photo.FullName.Contains("IMG_20180310_165252.jpg"))
-            {
-                Console.WriteLine();
-            }
-            if (!DirectoryHelper.CheckIfMiniatureExistsForPhoto(photo.FullName))
-            {
-                Console.WriteLine($"Does not exist, generating...");
-                return GenerateMiniature(photo);
-                //ctx.MiniatureLocations.Add(miniature);
-            }
-            else
-            {
-                Console.WriteLine($"Miniature for photo {photo.Name} found.");
-                var miniature = new PhotoMiniature();
-                miniature.MiniatureFileName = DirectoryHelper.GetMiniatureName(photo.Name);
-                miniature.OriginalImageFullPath = photo.FullName;
-                miniature.MiniatureFullPath = DirectoryHelper.GetFullMiniaturePath(miniature.MiniatureFileName, false);
-                miniature.OriginalImageFileName = photo.Name;
-                return miniature;
-            }
-
-            /*var miniature = ctx.MiniatureLocations.Where(m => m.OriginalImageFullPath.Equals(photo.FullName)).FirstOrDefault();
-            if (miniature == null)
-            {
-                miniature = new Miniature();
-                Console.WriteLine($"Miniature for photo {photo.FullName} not found in DB, checking for miniature file...");
-
-                if (!DirectoryHelper.CheckIfMiniatureExistsForPhoto(photo.FullName))
-                {
-                    Console.WriteLine($"Does not exist, generating...");
-                    miniature = GenerateMiniature(photo);
-                    ctx.MiniatureLocations.Add(miniature);
-                }
-                else
-                {
-                    Console.WriteLine($"Miniature for photo {photo.Name} found.");
-                    miniature.MiniatureFileName = DirectoryHelper.GetMiniatureName(photo.Name);
-                    miniature.OriginalImageFullPath = photo.FullName;
-                    miniature.MiniatureFullPath = DirectoryHelper.GetFullMiniaturePath(miniature.MiniatureFileName, false);
-                    miniature.OriginalImageFileName = photo.Name;
-                    photo.Miniature = miniature;
-                    ctx.MiniatureLocations.Add(miniature);
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Miniature for photo {photo.Name} found in DB, checking if exists.");
-                if (!DirectoryHelper.CheckIfMiniatureExistsForPhoto(photo.FullName))
-                {
-                    Console.WriteLine($"Does not exist, generating...");
-                    miniature = GenerateMiniature(photo);
-                    photo.Miniature = miniature;
-                    ctx.MiniatureLocations.Add(miniature);
-                }
-                else
-                {
-                    Console.WriteLine($"2Miniature for photo {photo.Name} found.");
-                    miniature.MiniatureFileName = DirectoryHelper.GetMiniatureName(photo.Name);
-                    miniature.OriginalImageFullPath = photo.FullName;
-                    miniature.MiniatureFullPath = DirectoryHelper.GetFullMiniaturePath(miniature.MiniatureFileName, false);
-                    miniature.OriginalImageFileName = photo.Name;
-                }
-            }*/
-            //return miniature;
-        }
-        private PhotoMiniature GenerateMiniature(Photo photo)
-        {
-            miniatureGenerator.MaxResolution = 128;
-            var miniatureImage = miniatureGenerator.GenerateMiniature(photo.FullName);
-
-            var path = DirectoryHelper.GetFullMiniaturePath(photo.Name, true);
-
-            var miniature = new PhotoMiniature()
-            {
-                MiniatureFullPath = path,
-                MiniatureFileName = DirectoryHelper.GetMiniatureName(photo.Name),
-                OriginalImageFullPath = photo.FullName,
-                OriginalImageFileName = photo.Name
-            };
-            if (!File.Exists(path))
-            {
-                miniatureImage.Save(path);
-            }
-            return miniature;
-        }
         private ICollection<string> FindDupePhotoNames(ICollection<Photo> photos)
         {
             HashSet<string> dupes = new HashSet<string>();
