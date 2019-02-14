@@ -123,6 +123,7 @@
     <Compile Include="Core\FaceApiMediator.cs" />
     <Compile Include="Core\MiniatureGenerator.cs" />
     <Compile Include="Data\GalliumContext.cs" />
+    <Compile Include="Helpers\PhotoHelper.cs" />
     <Compile Include="Migrations\201808041607374_InitialCreate.cs" />
     <Compile Include="Migrations\201808041607374_InitialCreate.Designer.cs">
       <DependentUpon>201808041607374_InitialCreate.cs</DependentUpon>
@@ -166,6 +167,14 @@
     <Compile Include="Migrations\201902111940081_faceapilogic1.cs" />
     <Compile Include="Migrations\201902111940081_faceapilogic1.Designer.cs">
       <DependentUpon>201902111940081_faceapilogic1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902131029032_photoEntityUpdate1.cs" />
+    <Compile Include="Migrations\201902131029032_photoEntityUpdate1.Designer.cs">
+      <DependentUpon>201902131029032_photoEntityUpdate1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902131037063_photoEntityUpdate2.cs" />
+    <Compile Include="Migrations\201902131037063_photoEntityUpdate2.Designer.cs">
+      <DependentUpon>201902131037063_photoEntityUpdate2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FaceApi\DetectedFace.cs" />
@@ -321,6 +330,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902111940081_faceapilogic1.resx">
       <DependentUpon>201902111940081_faceapilogic1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902131029032_photoEntityUpdate1.resx">
+      <DependentUpon>201902131029032_photoEntityUpdate1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902131037063_photoEntityUpdate2.resx">
+      <DependentUpon>201902131037063_photoEntityUpdate2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

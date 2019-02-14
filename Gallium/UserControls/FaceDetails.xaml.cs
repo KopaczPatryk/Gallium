@@ -27,11 +27,14 @@ namespace Gallium.UserControls
         {
             this.face = face;
             InitializeComponent();
-            
-            PersonNames.Text = $"{face.FaceOwner.Name} {face.FaceOwner.LastName}";
-            if (face.FaceOwner.DateOfBirth.HasValue)
+
+            if (face.FaceOwner != null)
             {
-                PersonAge.Text = $"{(int)((DateTime.Now - face.FaceOwner.DateOfBirth.Value).TotalDays) / 365} lat";
+                PersonNames.Text = $"{face.FaceOwner.Name} {face.FaceOwner.LastName}";
+                if (face.FaceOwner.DateOfBirth.HasValue)
+                {
+                    PersonAge.Text = $"{(int)((DateTime.Now - face.FaceOwner.DateOfBirth.Value).TotalDays) / 365} lat";
+                }
             }
 
             sta.MouseEnter += FaceRectangle_MouseEnter;
@@ -79,11 +82,6 @@ namespace Gallium.UserControls
                     FaceRectangle.Opacity = HiddenRectOpacity;
                     break;
             }
-        }
-
-        private void ChangeFaceOwner_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

@@ -15,7 +15,8 @@ namespace Gallium.Data
 
         public PhotoMiniature Miniature { get; set; }
 
-        public bool HasFaces { get; set; } = true;
+        public bool HasFacesChecked { get; set; } = false;
+        //public bool HasFaces { get; set; } = true;
         public virtual ICollection<DetectedFace> DetectedFaces { get; set; }
     }
 }

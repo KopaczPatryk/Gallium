@@ -1,19 +1,18 @@
 ﻿using Gallium.Data;
+using Gallium.Helpers;
+using Gallium.Models;
 using Microsoft.ProjectOxford.Face;
 using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Data.Entity;
+using System.Windows.Forms;
+using Gallium.Models.FaceApi;
 
 namespace Gallium.Windows
 {
@@ -21,7 +20,8 @@ namespace Gallium.Windows
     {
         private IFaceServiceClient FaceClient;
         private GalliumContext Context;
-
+        BackgroundWorker FaceApiWorker;
+        
         public MainMenu()
         {
             Context = new GalliumContext();
@@ -32,6 +32,96 @@ namespace Gallium.Windows
             InitWorkingDirectory();
 
             SynchroniseData();
+            
+            FaceApiWorker = new BackgroundWorker();
+            FaceApiWorker.DoWork += FaceApiWorker_DoWorkAsync;
+            FaceApiWorker.ProgressChanged += FaceApiWorker_ProgressChanged;
+            FaceApiWorker.RunWorkerCompleted += FaceApiWorker_RunWorkerCompleted;
+            FaceApiWorker.WorkerReportsProgress = true;
+            FaceApiWorker.RunWorkerAsync();
+        }
+
+        private void FaceApiWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Console.WriteLine($"Done analysing photos");
+
+        }
+
+        private void FaceApiWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            Console.WriteLine($"{e.ProgressPercentage} percent of photos analysed");
+        }
+
+        private void FaceApiWorker_DoWorkAsync(object sender, DoWorkEventArgs e)
+        {
+            using (GalliumContext ctx = new GalliumContext())
+            {
+                List<PhotoDirectories> directories = ctx.Directories.ToList();
+                IList<Photo> photos = PhotoHelper.DiscoverPhotosInDirectories(directories);
+
+                AddPhotosToDB(ctx, photos);
+                
+                photos = ctx.Photos.Where(p => p.HasFacesChecked == false).Include(f => f.DetectedFaces).ToList().Join(photos, a => a.Name, b => b.Name, (a, b) => b).ToList();
+                DetectFacesOnPhotosAsync(ctx, photos);
+            }
+        }
+
+        private void AddPhotosToDB(GalliumContext ctx, IList<Photo> photos)
+        {
+            foreach (var photo in photos)
+            {
+                if (!ctx.Photos.Where(p => p.FullName.Equals(photo.FullName)).Any())
+                {
+                    ctx.Photos.Add(photo);
+                }
+            }
+            ctx.SaveChanges();
+        }
+
+        private void DetectFacesOnPhotosAsync(GalliumContext ctx, IList<Photo> photos)
+        {
+            float startCount = photos.Count;
+            while (photos.Any())
+            {
+                FaceApiWorker.ReportProgress(100 - (int)(photos.Count / startCount * 100));
+
+                ProcessPhoto(ctx, photos.First());
+                photos.Remove(photos.First());
+            }
+        }
+
+        private void ProcessPhoto(GalliumContext ctx, Photo photo)
+        {
+            Console.WriteLine($"Beginning processing of photo {photo.Name}");
+            try
+            {
+                if (!photo.HasFacesChecked)
+                {
+                    photo.HasFacesChecked = true;
+
+                    var faces = PhotoHelper.UploadToFaceApiAsync(photo.FullName).Result;
+
+                    foreach (var face in faces)
+                    {
+                        var faceEntity = new Models.FaceApi.DetectedFace
+                        {
+                            HumanVerified = false,
+                            FaceRectangle = face.FaceRectangle,
+                            Photo = photo,
+                            FaceId = face.FaceId
+                        };
+                        PhotoHelper.ExtractFaceFromPhoto(photo, faceEntity);
+                        faceEntity.FaceFile = DirectoryHelper.GetFacePath(face.FaceId.ToString());
+                        ctx.DetectedFaces.Add(faceEntity);
+                    }
+                    ctx.SaveChanges();
+                }
+            }
+            catch (System.IO.IOException e) { Thread.Sleep(500); }
+            catch (Exception e)
+            {
+                Thread.Sleep(5000);
+            }
         }
 
         private async void InitPersonGroup()
@@ -47,7 +137,7 @@ namespace Gallium.Windows
         {
             if (string.IsNullOrEmpty(Properties.Settings.Default.GalleryMainFolder))
             {
-                MessageBox.Show("Folder w którym mają być przechowywane pliki pomocnicze nie został jeszcze wybrany. Teraz otworzę okno wyboru folderu głównego.");
+                System.Windows.MessageBox.Show("Folder w którym mają być przechowywane pliki pomocnicze nie został jeszcze wybrany. Teraz otworzę okno wyboru folderu głównego.");
                 VistaFolderBrowserDialog setupDirectory = new VistaFolderBrowserDialog();
                 setupDirectory.Description = "Wybierz lokalizacje pomocniczą.";
                 setupDirectory.ShowDialog();

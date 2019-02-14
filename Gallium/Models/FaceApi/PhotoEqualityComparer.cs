@@ -12,7 +12,7 @@ namespace Gallium.Models.FaceApi
     {
         public bool Equals(Photo x, Photo y)
         {
-            if (x.FullName.Equals(y.FullName) && x.Name.Equals(y.Name))
+            if (x.FullName.Equals(y.FullName) || x.Name.Equals(y.Name))
             {
                 return true;
             }
