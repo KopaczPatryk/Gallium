@@ -82,7 +82,7 @@ namespace Gallium.Windows
                     OnFaceRecognised?.Invoke(recognizedPerson, false);
                 }
                 ctx.SaveChanges();
-                this.Close();
+                Close();
             }
         }
     }

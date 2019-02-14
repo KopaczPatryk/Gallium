@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gallium.Windows"
         mc:Ignorable="d"
-        Title="PersonCreationWindow" Height="322.246" MinHeight="322.246" Width="800">
+        Title="PersonCreationWindow" Height="322.246" MinHeight="322.246" Width="797.952">
     <Grid>
         <Grid>
             <Grid.ColumnDefinitions>
