@@ -5,27 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gallium.UserControls"
              mc:Ignorable="d" >
-    <UserControl.Resources>
-        <Style x:Key="NormalStyle">
-            <Setter Property="Control.FontSize" Value="20"></Setter>
-            <Setter Property="Control.Background" Value="Transparent"></Setter>
-            <Setter Property="Control.BorderBrush" Value="Transparent"></Setter>
-            
-            <Style.Triggers>
-                <Trigger Property="Control.IsMouseOver" Value="true">
-                    <Setter Property="Control.FontStyle" Value="Italic"></Setter>
-                    <Setter Property="Control.Foreground" Value="Red"></Setter>
-                    <Setter Property="Control.Background" Value="Yellow"></Setter>
-                </Trigger>
-                <Trigger Property="Button.IsPressed" Value="true">
-                    <Setter Property="Control.Foreground" Value="Green"></Setter>
-                    <Setter Property="Control.Background" Value="Blue"></Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Resources>
-    <Grid>
-        <Image Source="../Assets/morda.jpg" Width="60" Height="60"/>
-        <Button Name="FaceAction" Margin="10" Style="{StaticResource NormalStyle}" MouseEnter="FaceAction_MouseEnter" MouseLeave="FaceAction_MouseLeave" Click="FaceAction_Click" />
+
+    <Grid MouseEnter="Grid_MouseEnter">
+        <Image Name="FaceImage" Source="../Assets/morda.jpg" Width="60" Height="60"/>
+        <Button Name="Action" Click="Action_Click" Width="40" Height="40" Background="Transparent" Foreground="Transparent" BorderBrush="Transparent"/>
     </Grid>
 </UserControl>

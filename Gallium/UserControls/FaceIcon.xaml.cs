@@ -17,8 +17,8 @@ using System.Windows.Shapes;
 
 namespace Gallium.UserControls
 {
-    public delegate void OnFaceIconAcceptedHandler();
-    public delegate void OnFaceIconRejectedHandler();
+    public delegate void OnFaceIconAcceptedHandler(FaceIcon ths);
+    public delegate void OnFaceIconRejectedHandler(FaceIcon ths);
 
     public partial class FaceIcon : UserControl
     {
@@ -40,41 +40,43 @@ namespace Gallium.UserControls
 
         private void FaceIcon_Loaded(object sender, RoutedEventArgs e)
         {
+            FaceImage.Source = new BitmapImage(new Uri(DirectoryHelper.GetFacePath(Face.FaceId.ToString()), UriKind.Absolute));
+            
+            ManageBackground();
+        }
+                
+        private void Grid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ManageBackground();
+        }
+
+        private void Action_Click(object sender, RoutedEventArgs e)
+        {
+            IsCurrentlyAccepted = !IsCurrentlyAccepted;
+            if (IsCurrentlyAccepted)
+            {
+                RejectedListener?.Invoke(this);
+            }
+            else
+            {
+                AcceptedListener?.Invoke(this);
+            }
+            ManageBackground();
+        }
+
+        private void ManageBackground()
+        {
             var brush = new ImageBrush();
-            brush.ImageSource = new BitmapImage(new Uri(DirectoryHelper.GetFacePath(Face.FaceFile), UriKind.Absolute));
-            FaceAction.Background = brush;
-        }
 
-        private void FaceAction_MouseEnter(object sender, MouseEventArgs e)
-        {
             if (IsCurrentlyAccepted)
             {
-                var brush = new ImageBrush();
-                brush.ImageSource = new BitmapImage(new Uri("Assets/icons/nok.png", UriKind.Relative));
-                FaceAction.Background = brush;
-            }
-            else
-            {
-                var brush = new ImageBrush();
                 brush.ImageSource = new BitmapImage(new Uri("Assets/icons/ok.png", UriKind.Relative));
-                FaceAction.Background = brush;
-            }
-        }
-
-        private void FaceAction_MouseLeave(object sender, MouseEventArgs e)
-        {
-            FaceAction.Background = Brushes.Transparent;
-        }
-
-        private void FaceAction_Click(object sender, RoutedEventArgs e)
-        {
-            if (IsCurrentlyAccepted)
-            {
-                RejectedListener?.Invoke();
+                Action.Background = brush;
             }
             else
             {
-                AcceptedListener?.Invoke();
+                brush.ImageSource = new BitmapImage(new Uri("Assets/icons/nok.png", UriKind.Relative));
+                Action.Background = brush;
             }
         }
     }

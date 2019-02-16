@@ -28,10 +28,11 @@ namespace Gallium.UserControls
             var re = context.DetectedFaces.Where(f => f.FaceOwner.Id == person.Id).ToList();
             foreach (var face in re)
             {
+                /*
                 System.Windows.Controls.Image image = new System.Windows.Controls.Image();
 
-                image.Source = new BitmapImage(new Uri(face.FaceFile));
-                VerifiedFaces.Children.Add(image);
+                image.Source = new BitmapImage(new Uri(face.FaceFile));*/
+                VerifiedFaces.Children.Add(new FaceIcon(face, face.HumanVerified));
             }
         }
     }

@@ -198,6 +198,9 @@
     <Compile Include="UserControls\FaceDetails.xaml.cs">
       <DependentUpon>FaceDetails.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\FaceIcon.xaml.cs">
+      <DependentUpon>FaceIcon.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ILoadableImage.cs" />
     <Compile Include="UserControls\UserSelector.xaml.cs">
       <DependentUpon>UserSelector.xaml</DependentUpon>
@@ -232,6 +235,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\FaceDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\FaceIcon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -361,6 +368,17 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\FaceApi\Structure\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\icons\nok.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\icons\ok.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\morda.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
