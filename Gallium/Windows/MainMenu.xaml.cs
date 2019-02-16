@@ -26,6 +26,7 @@ namespace Gallium.Windows
         {
             Context = new GalliumContext();
             FaceClient = new FaceServiceClient(Constants.APIkey, Constants.APIUri);
+
             InitializeComponent();
 
             InitPersonGroup();
@@ -60,9 +61,9 @@ namespace Gallium.Windows
                 IList<Photo> photos = PhotoHelper.DiscoverPhotosInDirectories(directories);
 
                 AddPhotosToDB(ctx, photos);
-                
-                photos = ctx.Photos.Where(p => p.HasFacesChecked == false).Include(f => f.DetectedFaces).ToList().Join(photos, a => a.Name, b => b.Name, (a, b) => b).ToList();
-                DetectFacesOnPhotosAsync(ctx, photos);
+
+                var uncheckedPhotos = ctx.Photos.Where(p => p.HasFacesChecked == false).ToList();
+                DetectFacesOnPhotosAsync(ctx, uncheckedPhotos);
             }
         }
 

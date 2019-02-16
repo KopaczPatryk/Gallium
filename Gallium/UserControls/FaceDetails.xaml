@@ -9,8 +9,8 @@
     <StackPanel Name="sta" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Background="Transparent">
         <Rectangle Name="FaceRectangle" HorizontalAlignment="Left" VerticalAlignment="Top" Stroke="White" StrokeThickness="3" RadiusX="5" RadiusY="5" Opacity="0.25"/>
         <StackPanel Name="FaceProperties" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,0,0" Visibility="Hidden">
-            <TextBlock Name="PersonNames" Foreground="White" FontStyle="Italic" TextDecorations="{x:Null}" FontWeight="Medium" FontSize="12" HorizontalAlignment="Left">Patryk Kopacz</TextBlock>
-            <TextBlock Name="PersonAge" Foreground="White" FontStyle="Italic" TextDecorations="{x:Null}" FontWeight="Medium" FontSize="12" HorizontalAlignment="Left">15 Lat</TextBlock>
+            <TextBlock Name="PersonNames" Foreground="White" FontStyle="Italic" TextDecorations="{x:Null}" FontWeight="Medium" FontSize="12" HorizontalAlignment="Left">Jakiś typek</TextBlock>
+            <TextBlock Name="PersonAge" Foreground="White" FontStyle="Italic" TextDecorations="{x:Null}" FontWeight="Medium" FontSize="12" HorizontalAlignment="Left"></TextBlock>
             <Button Name="ChangeFaceOwner" Content="Edytuj" HorizontalAlignment="Left" Background="Transparent" BorderBrush="Transparent" FontWeight="Medium" FontSize="12" Foreground="White" FontStyle="Italic"/>
         </StackPanel>
     </StackPanel>
