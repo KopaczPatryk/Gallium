@@ -12,9 +12,9 @@
         <!--<usercontrols:UserSelector x:Name="UsernameList" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,255,0,0" />-->
         <ComboBox Name="UsernameList" HorizontalAlignment="Left" VerticalAlignment="Top" IsEditable="True" Width="250" Margin="0,255,0,0"/>
         <Button Content="Nowa osoba" HorizontalAlignment="Left" VerticalAlignment="Top" Width="251" Margin="0,282,0,0" Name="NewPerson" Click="NewPerson_Click"/>
-        <Button Content="To nie twarz" HorizontalAlignment="Left" VerticalAlignment="Top" Width="251" Margin="0,352,0,0" Name="NotAFace"/>
-        <Button Content="Potem bradda" HorizontalAlignment="Left" VerticalAlignment="Top" Width="250" Margin="0,327,0,0" Name="Postpone"/>
-        <CheckBox Content="Nadaje się do walidacji" VerticalAlignment="Top" Margin="0,307,0,0" HorizontalAlignment="Left" Name="ValidationFriendly"/>
+        <Button Content="To nie twarz" HorizontalAlignment="Left" VerticalAlignment="Top" Width="251" Margin="0,352,0,0" Name="NotAFace" Click="NotAFace_Click"/>
+        <Button Content="Potem bradda" HorizontalAlignment="Left" VerticalAlignment="Top" Width="250" Margin="0,327,0,0" Name="Postpone" Click="Postpone_Click"/>
+        <CheckBox Content="Nadaje się do identyfikacji" VerticalAlignment="Top" Margin="0,307,0,0" HorizontalAlignment="Left" Name="ValidationFriendly"/>
         <Button Name="Accept" Content="Ok" HorizontalAlignment="Left" VerticalAlignment="Top" Width="251" Margin="0,377,0,0" Click="Accept_Click"/>
         <CheckBox Content="Kontynuuj" VerticalAlignment="Top" Margin="0,402,0,0" HorizontalAlignment="Left" x:Name="ContinueValidating"/>
     </Grid>

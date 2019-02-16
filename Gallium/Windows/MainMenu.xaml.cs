@@ -26,12 +26,13 @@ namespace Gallium.Windows
         {
             Context = new GalliumContext();
             FaceClient = new FaceServiceClient(Constants.APIkey, Constants.APIUri);
-
+            
             InitializeComponent();
 
             InitPersonGroup();
             InitWorkingDirectory();
 
+            ResetPostponedFaces();
             SynchroniseData();
             
             FaceApiWorker = new BackgroundWorker();
@@ -149,6 +150,16 @@ namespace Gallium.Windows
                 }
             }
             Console.WriteLine(Properties.Settings.Default.GalleryMainFolder);
+        }
+
+        private void ResetPostponedFaces()
+        {
+            var faces = Context.DetectedFaces.ToList();
+            faces.ForEach(f =>
+            {
+                f.Postponed = false;
+            });
+            Context.SaveChanges();
         }
 
         private async void SynchroniseData()

@@ -1,4 +1,5 @@
 ﻿using Gallium.Data;
+using Gallium.Models.FaceApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,37 +21,65 @@ namespace Gallium.Windows
     /// </summary>
     public partial class FaceVerificationMenu : Window
     {
-        private GalliumContext context;
+        private GalliumContext Context;
+
+        private DetectedFace CurrentUnknownFace;
         public FaceVerificationMenu()
         {
             InitializeComponent();
-            context = new GalliumContext();
+            Context = new GalliumContext();
         }
 
-        private void Button_FaceRegister_Click(object sender, RoutedEventArgs e)
+        private void PersonProfiles_Click(object sender, RoutedEventArgs e)
         {
-            PeopleProfilesWindow peopleWindow = new PeopleProfilesWindow(context);
+            PeopleProfilesWindow peopleWindow = new PeopleProfilesWindow(Context);
             peopleWindow.ShowDialog();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void LaunchFaceRecognitionTool_Click(object sender, RoutedEventArgs e)
         {
-            var unknownFace = context.DetectedFaces.Where(f => f.FaceOwner == null).FirstOrDefault();
-            if (unknownFace != null)
-            {
-                FaceRecognitionWindow faceRecognitionWindow = new FaceRecognitionWindow(context, unknownFace);
-                faceRecognitionWindow.OnFaceRecognised += FaceRecognitionWindow_OnFaceRecognised;
-                faceRecognitionWindow.Show();
-            }
+            ShowRecognitionWindow();
+        }
+
+        private void ShowRecognitionWindow(bool continueValidation = false)
+        {
+            CurrentUnknownFace = Context.DetectedFaces.Where(f => f.FaceOwner == null && f.Postponed == false).FirstOrDefault();
+
+            FaceRecognitionWindow faceRecognitionWindow = new FaceRecognitionWindow(Context, CurrentUnknownFace, continueValidation);
+            faceRecognitionWindow.FaceRecognised += FaceRecognitionWindow_OnFaceRecognised;
+            faceRecognitionWindow.RecognitionPostponed += FaceRecognitionWindow_PostponeListener;
+            faceRecognitionWindow.FaceCorrupted += FaceRecognitionWindow_CorruptedListener;
+            faceRecognitionWindow.Show();
         }
 
         private void FaceRecognitionWindow_OnFaceRecognised(Models.Person person, bool continueValidation)
         {
-            var unknownFace = context.DetectedFaces.Where(f => f.FaceOwner == null).FirstOrDefault();
+            CurrentUnknownFace.FaceOwner = person;
+            Context.SaveChanges();
+            if (continueValidation)
+            {
+                ShowRecognitionWindow(continueValidation);
+            }
+        }
+        
+        private void FaceRecognitionWindow_CorruptedListener(bool continueValidation)
+        {
+            CurrentUnknownFace.IsValidFace = false;
+            Context.SaveChanges();
+            if (continueValidation)
+            {
+                ShowRecognitionWindow(continueValidation);
+            }
+        }
 
-            FaceRecognitionWindow faceRecognitionWindow = new FaceRecognitionWindow(context, unknownFace, continueValidation);
-            faceRecognitionWindow.OnFaceRecognised += FaceRecognitionWindow_OnFaceRecognised;
-            faceRecognitionWindow.Show();
+        private void FaceRecognitionWindow_PostponeListener(bool continueValidation)
+        {
+            CurrentUnknownFace.Postponed = true;
+            Context.SaveChanges();
+            if (continueValidation)
+            {
+                ShowRecognitionWindow(continueValidation);
+            }
         }
     }
 }

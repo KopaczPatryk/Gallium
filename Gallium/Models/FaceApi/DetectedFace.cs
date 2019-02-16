@@ -17,9 +17,12 @@ namespace Gallium.Models.FaceApi
         public bool AssignedByHuman { get; set; }
         public FaceRectangle FaceRectangle { get; set; }
         public string FaceFile { get; set; }
+        public bool IsValidFace { get; set; }
+
         public Person FaceOwner { get; set; }
 
         public int PhotoId { get; set; }
         public Photo Photo { get; set; }
+        public bool Postponed { get; internal set; }
     }
 }

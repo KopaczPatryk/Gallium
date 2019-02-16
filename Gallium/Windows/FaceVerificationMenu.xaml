@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="FaceVerificationMenu" Height="450" Width="800">
     <Grid>
-        <Button Name="Button_FaceRegister" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Click="Button_FaceRegister_Click">Rejestr osób</Button>
-        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,35,0,0" Click="Button_Click">Rejestr twarzy</Button>
+        <Button Name="PersonProfiles" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Click="PersonProfiles_Click">Profile osób</Button>
+        <Button Name="LaunchFaceRecognitionTool"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,35,0,0" Click="LaunchFaceRecognitionTool_Click">Narzędzie rozpoznawania twarzy</Button>
     </Grid>
 </Window>

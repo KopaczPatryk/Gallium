@@ -19,32 +19,35 @@ using System.Windows.Shapes;
 namespace Gallium.Windows
 {
     public delegate void OnFaceRecognised(Person person, bool continueValidation);
+    public delegate void OnRecognitionPostponed(bool continueValidation);
+    public delegate void OnFaceCorrupted(bool continueValidation);
 
     public partial class FaceRecognitionWindow : Window
     {
-        public event OnFaceRecognised OnFaceRecognised;
+        public event OnFaceRecognised FaceRecognised;
+        public event OnRecognitionPostponed RecognitionPostponed;
+        public event OnFaceCorrupted FaceCorrupted;
 
-        private Person recognizedPerson;
-        private GalliumContext ctx;
-        private DetectedFace face;
-        private Photo photoContainingThisFace;
-        public FaceRecognitionWindow(GalliumContext context, DetectedFace face, bool continueValidationOnEnd = false)
+        private Person RecognizedPerson;
+        private GalliumContext Context;
+        private DetectedFace UnrecognisedFace;
+        public FaceRecognitionWindow(GalliumContext context, DetectedFace unrecognisedFace, bool continueValidationOnEnd = false)
         {
-            ctx = context;
-            this.face = face;
-            photoContainingThisFace = face.Photo;
+            Context = context;
+            UnrecognisedFace = unrecognisedFace;
+
             InitializeComponent();
             ContinueValidating.IsChecked = continueValidationOnEnd;
             
-            FaceImage.Source = new BitmapImage(new Uri(face.FaceFile));
+            FaceImage.Source = new BitmapImage(new Uri(unrecognisedFace.FaceFile));
 
-            UsernameList.ItemsSource = ctx.Person.ToList();
+            UsernameList.ItemsSource = Context.Person.ToList();
             UsernameList.SelectionChanged += UsernameList_SelectionChanged;
         }
 
         private void UsernameList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recognizedPerson = (Person)UsernameList.SelectedItem;
+            RecognizedPerson = (Person)UsernameList.SelectedItem;
         }
 
         private void NewPerson_Click(object sender, RoutedEventArgs e)
@@ -62,28 +65,50 @@ namespace Gallium.Windows
             Guid personId = creationResult.PersonId;
             person.RemoteGuid = personId;
 
-            ctx.Person.Add(person);
-            ctx.SaveChanges();
+            Context.Person.Add(person);
+            Context.SaveChanges();
 
-            UsernameList.ItemsSource = ctx.Person.ToList();
+            UsernameList.ItemsSource = Context.Person.ToList();
         }
 
         private void Accept_Click(object sender, RoutedEventArgs e)
         {
-            if (recognizedPerson != null)
+            if (RecognizedPerson != null)
             {
-                face.FaceOwner = recognizedPerson;
                 if (ContinueValidating.IsChecked.HasValue)
                 {
-                    OnFaceRecognised?.Invoke(recognizedPerson, ContinueValidating.IsChecked.Value);
+                    FaceRecognised?.Invoke(RecognizedPerson, ContinueValidating.IsChecked.Value);
                 }
                 else
                 {
-                    OnFaceRecognised?.Invoke(recognizedPerson, false);
+                    FaceRecognised?.Invoke(RecognizedPerson, false);
+
                 }
-                ctx.SaveChanges();
+                ClearSubscribers();
+                FaceRecognised = null;
                 Close();
             }
+        }
+        
+        private void Postpone_Click(object sender, RoutedEventArgs e)
+        {
+            RecognitionPostponed?.Invoke(ContinueValidating.IsChecked.Value);
+            ClearSubscribers();
+            Close();
+        }
+
+        private void NotAFace_Click(object sender, RoutedEventArgs e)
+        {
+            FaceCorrupted?.Invoke(ContinueValidating.IsChecked.Value);
+            ClearSubscribers();
+            Close();
+        }
+
+        private void ClearSubscribers()
+        {
+            FaceRecognised = null;
+            RecognitionPostponed = null;
+            FaceCorrupted = null;
         }
     }
 }
