@@ -13,22 +13,23 @@ using System.Windows;
 using System.Data.Entity;
 using System.Windows.Forms;
 using Gallium.Models.FaceApi;
+using Microsoft.Azure.CognitiveServices.Vision.Face.Models;
 
 namespace Gallium.Windows
 {
     public partial class MainMenu : Window
     {
-        private IFaceServiceClient FaceClient;
         private GalliumContext Context;
+        private IFaceServiceClient FaceClient;
         BackgroundWorker FaceApiWorker;
         
         public MainMenu()
         {
             Context = new GalliumContext();
             FaceClient = new FaceServiceClient(Constants.APIkey, Constants.APIUri);
-            
-            InitializeComponent();
 
+            InitializeComponent();
+            
             InitPersonGroup();
             InitWorkingDirectory();
 

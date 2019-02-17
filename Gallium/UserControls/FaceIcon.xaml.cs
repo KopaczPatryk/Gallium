@@ -25,12 +25,11 @@ namespace Gallium.UserControls
         public event OnFaceIconAcceptedHandler AcceptedListener;
         public event OnFaceIconRejectedHandler RejectedListener;
 
-        private bool IsCurrentlyAccepted = false;
+        //private bool IsCurrentlyAccepted = false;
         private DetectedFace Face;
 
-        public FaceIcon(DetectedFace face, bool isAccepted)
+        public FaceIcon(DetectedFace face)
         {
-            IsCurrentlyAccepted = isAccepted;
             Face = face;
 
             InitializeComponent();
@@ -52,8 +51,8 @@ namespace Gallium.UserControls
 
         private void Action_Click(object sender, RoutedEventArgs e)
         {
-            IsCurrentlyAccepted = !IsCurrentlyAccepted;
-            if (IsCurrentlyAccepted)
+            //IsCurrentlyAccepted = !IsCurrentlyAccepted;
+            if (Face.HumanVerified)
             {
                 RejectedListener?.Invoke(this);
             }
@@ -68,14 +67,14 @@ namespace Gallium.UserControls
         {
             var brush = new ImageBrush();
 
-            if (IsCurrentlyAccepted)
+            if (Face.HumanVerified)
             {
-                brush.ImageSource = new BitmapImage(new Uri("Assets/icons/ok.png", UriKind.Relative));
+                brush.ImageSource = new BitmapImage(new Uri("Assets/icons/nok.png", UriKind.Relative));
                 Action.Background = brush;
             }
             else
             {
-                brush.ImageSource = new BitmapImage(new Uri("Assets/icons/nok.png", UriKind.Relative));
+                brush.ImageSource = new BitmapImage(new Uri("Assets/icons/ok.png", UriKind.Relative));
                 Action.Background = brush;
             }
         }

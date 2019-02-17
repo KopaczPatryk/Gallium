@@ -7,7 +7,7 @@
              mc:Ignorable="d" >
 
     <Grid MouseEnter="Grid_MouseEnter">
-        <Image Name="FaceImage" Source="../Assets/morda.jpg" Width="60" Height="60"/>
+        <Image Name="FaceImage" Source="../Assets/morda.jpg"/>
         <Button Name="Action" Click="Action_Click" Width="40" Height="40" Background="Transparent" Foreground="Transparent" BorderBrush="Transparent"/>
     </Grid>
 </UserControl>

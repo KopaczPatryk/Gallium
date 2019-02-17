@@ -12,9 +12,6 @@ using System.Windows.Media.Imaging;
 
 namespace Gallium.UserControls
 {
-    /// <summary>
-    /// Interaction logic for DetailedPersonView.xaml
-    /// </summary>
     public partial class DetailedPersonView : UserControl
     {
         public DetailedPersonView(Person person, GalliumContext context)
@@ -22,17 +19,18 @@ namespace Gallium.UserControls
             this.DataContext = person;
             InitializeComponent();
             GroupBox.Header = $"{person.Name} {person.LastName}";
-
-            //FullName.Content = $"{person.Name} {person.LastName}";
+            
             DateOfBirth.Content = person.DateOfBirth.HasValue ? person.DateOfBirth.Value.ToString("dd-MM-yyyy") : "";
-            var re = context.DetectedFaces.Where(f => f.FaceOwner.Id == person.Id).ToList();
-            foreach (var face in re)
+            var humanVerifiedFaces = context.DetectedFaces.Where(f => f.FaceOwner.Id == person.Id && f.HumanVerified == true).ToList();
+            foreach (var face in humanVerifiedFaces)
             {
-                /*
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+                VerifiedFaces.Children.Add(new FaceIcon(face));
+            }
 
-                image.Source = new BitmapImage(new Uri(face.FaceFile));*/
-                VerifiedFaces.Children.Add(new FaceIcon(face, face.HumanVerified));
+            var otherFaces = context.DetectedFaces.Where(f => f.FaceOwner.Id == person.Id && f.HumanVerified == false).ToList();
+            foreach (var face in otherFaces)
+            {
+                VerifiedFaces.Children.Add(new FaceIcon(face));
             }
         }
     }

@@ -38,6 +38,10 @@ namespace Gallium.Windows
             {
                 PeopleList.Children.Add(new DetailedPersonView(person, Context));
             }
+            foreach (var face in Context.DetectedFaces.Where(f => f.FaceOwner == null).ToList())
+            {
+                Faces.Children.Add(new FaceIcon(face));
+            }
         }
 
         private void CreatePersonButton_Click(object sender, RoutedEventArgs e)

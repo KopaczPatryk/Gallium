@@ -4,31 +4,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gallium.UserControls"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
+             mc:Ignorable="d"
+             d:DesignWidth="750"
              Background="White">
     <GroupBox Background="White" Name="GroupBox" Header="{Binding Path=Name}">
         <Grid>
             <Image HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Height="200" Source="/Assets/placeholder.jpg"/>
-            <!--<Image HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Height="200" Name="PersonProfileImage" Source="Assets/placeholder.jpg"/>-->
-            <!--<Label Name="FullName" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Full name" Margin="0,205,0,0"/>-->
             <Label Name="DateOfBirth" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Data urodzenia pedryla" Margin="0,205,0,0"/>
-            <!--<ScrollViewer Margin="155,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-        </ScrollViewer>-->
-            <StackPanel Orientation="Vertical" Margin="155,0,0,23">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="155,0,10,0">
                 <GroupBox Header="Twarze zatwierdzone" MinHeight="40">
-                    <WrapPanel Name="VerifiedFaces" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="100" ItemHeight="100">
+                    <WrapPanel Name="VerifiedFaces" HorizontalAlignment="Stretch" VerticalAlignment="Top" MinHeight="30" ItemHeight="50">
 
                     </WrapPanel>
                 </GroupBox>
                 <GroupBox Header="Twarze sugerowane" MinHeight="40">
-                    <WrapPanel Name="SuggestedFaces" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="100" ItemHeight="100">
+                    <WrapPanel Name="SuggestedFaces" HorizontalAlignment="Stretch" VerticalAlignment="Top" MinHeight="30" ItemHeight="50">
 
                     </WrapPanel>
                 </GroupBox>
             </StackPanel>
-            <Button Content="Edytuj" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="15, 0" Margin="0,236,0,0"/>
+            <Button Content="Edytuj" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="15, 0"/>
         </Grid>
     </GroupBox>
-
 </UserControl>
