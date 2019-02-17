@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:Gallium.UserControls"
              mc:Ignorable="d" >
 
-    <Grid MouseEnter="Grid_MouseEnter">
+    <Grid MouseEnter="Grid_MouseEnter" MouseMove="Grid_MouseMove">
         <Image Name="FaceImage" Source="../Assets/morda.jpg"/>
-        <Button Name="Action" Click="Action_Click" Width="40" Height="40" Background="Transparent" Foreground="Transparent" BorderBrush="Transparent"/>
+        <!--<Button Name="Action" Click="Action_Click" Width="40" Height="40" Background="Transparent" Foreground="Transparent" BorderBrush="Transparent"/>-->
     </Grid>
 </UserControl>

@@ -20,11 +20,13 @@ namespace Gallium.UserControls
     public delegate void OnFaceIconAcceptedHandler(FaceIcon ths);
     public delegate void OnFaceIconRejectedHandler(FaceIcon ths);
 
+    public delegate void OnFaceDrag(FaceIcon ths);
+
     public partial class FaceIcon : UserControl
     {
         public event OnFaceIconAcceptedHandler AcceptedListener;
         public event OnFaceIconRejectedHandler RejectedListener;
-
+        public event OnFaceDrag OnDragStarted;
         //private bool IsCurrentlyAccepted = false;
         private DetectedFace Face;
 
@@ -70,12 +72,25 @@ namespace Gallium.UserControls
             if (Face.HumanVerified)
             {
                 brush.ImageSource = new BitmapImage(new Uri("Assets/icons/nok.png", UriKind.Relative));
-                Action.Background = brush;
+                //Action.Background = brush;
             }
             else
             {
                 brush.ImageSource = new BitmapImage(new Uri("Assets/icons/ok.png", UriKind.Relative));
-                Action.Background = brush;
+                //Action.Background = brush;
+            }
+        }
+
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DataObject dataObject = new DataObject();
+                dataObject.SetData("Face", Face);
+                DragDrop.DoDragDrop(this, dataObject, DragDropEffects.Move);
+                OnDragStarted?.Invoke(this);
+                OnDragStarted = null;
             }
         }
     }

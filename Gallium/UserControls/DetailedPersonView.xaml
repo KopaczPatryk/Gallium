@@ -13,12 +13,12 @@
             <Label Name="DateOfBirth" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Data urodzenia pedryla" Margin="0,205,0,0"/>
             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="155,0,10,0">
                 <GroupBox Header="Twarze zatwierdzone" MinHeight="40">
-                    <WrapPanel Name="VerifiedFaces" HorizontalAlignment="Stretch" VerticalAlignment="Top" MinHeight="30" ItemHeight="50">
+                    <WrapPanel AllowDrop="True" Drop="VerifiedFaces_Drop" DragOver="VerifiedFaces_DragOver" Name="VerifiedFaces" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="30" ItemHeight="50">
 
                     </WrapPanel>
                 </GroupBox>
-                <GroupBox Header="Twarze sugerowane" MinHeight="40">
-                    <WrapPanel Name="SuggestedFaces" HorizontalAlignment="Stretch" VerticalAlignment="Top" MinHeight="30" ItemHeight="50">
+                <GroupBox Header="Twarze nie nadające się do trenowania" MinHeight="40">
+                    <WrapPanel AllowDrop="True" Drop="OtherFaces_Drop" DragOver="VerifiedFaces_DragOver" Name="OtherFaces" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="30" ItemHeight="50">
 
                     </WrapPanel>
                 </GroupBox>
